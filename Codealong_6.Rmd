@@ -1,0 +1,73 @@
+---
+title: "Codealong_6"
+author: "Jake Nyiri"
+date: "11/17/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(ggpubr)
+library(broom)
+```
+```{r}
+#Create sample vectors, set seed so random generation matches ones from lab
+set.seed(1414)
+gp_1<- sample.int(20, size = 15,replace = TRUE)
+set.seed(1424)
+gp_2<- sample.int(30, size = 15, replace = TRUE)
+
+```
+
+```{r}
+#baser hist function which I wish Id known existed
+hist(gp_1)
+hist(gp_2)
+
+```
+
+```{r}
+#Run tw0-sample unpaired rank test (WM test )
+my_wmu <- wilcox.test(gp_1,gp_2)
+#error is normal because some values repeated in vectors
+```
+```{r}
+#Duh plot of penguins
+penguin_plot<-penguins %>% 
+  ggplot(aes(x=flipper_length_mm, y=body_mass_g))+
+  geom_point()
+
+penguin_plot
+```
+```{r}
+#duh linear model of penguins
+penguin_lm <- lm(body_mass_g ~ flipper_length_mm, data=penguins)
+#summary gets summary info for linear model
+summary(penguin_lm)
+```
+```{r}
+#clean it up and present it
+penguin_lm_tidy <- broom::tidy(penguin_lm)
+penguin_lm_tidy
+#intercept is (intercept), slope is flipper_length_mm
+```
+```{r}
+#this pulls out individual values for the intercept and slope from the summary
+penguin_int <- penguin_lm_tidy$estimate[1]
+penguin_int
+
+penguin_coeff <- penguin_lm_tidy$estimate[2]
+penguin_coeff
+```
+```{r}
+#Kind of tedious, can get some metrics easier
+penguin_lm_out <- broom::glance(penguin_lm)
+penguin_lm_out
+```
+
+
