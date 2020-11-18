@@ -61,13 +61,40 @@ penguin_lm_tidy
 penguin_int <- penguin_lm_tidy$estimate[1]
 penguin_int
 
-penguin_coeff <- penguin_lm_tidy$estimate[2]
-penguin_coeff
+penguin_coef <- penguin_lm_tidy$estimate[2]
+penguin_coef
 ```
 ```{r}
 #Kind of tedious, can get some metrics easier
 penguin_lm_out <- broom::glance(penguin_lm)
 penguin_lm_out
 ```
+This code frustratingly utilizes actual model values and can be re-used but has no explanation! So no idea what it's doing.
 
+"Simple linear regression was used to explore the relationship between penguin flipper length (mm) and body mass (g) across all three penguin species, and including both male and female penguins. A significant regression model was found ($\beta$ = `r round(penguin_coef,3)`, F(`r penguin_lm_out$df`,`r penguin_lm_out$df.residual`) = `r round(penguin_lm_out$statistic,1)`, p < 0.001) with an R^2^ of `r round(penguin_lm_out$r.squared,3)`."
+
+```{r}
+#This somehow magically creates the four graphsd to check the residuals for stuff
+plot(penguin_lm)
+
+```
+
+```{r}
+#make a graph with the eqn superimposed
+ggplot(data=penguins, aes(x=flipper_length_mm, y=body_mass_g))+
+  geom_point()+
+  geom_smooth(method="lm", #creates new lm, doesn't add penguin_lm?
+              color="red",
+              size = 0.5,
+              fill = "gray10",
+              alpha = 0.5) + #trans[arency of the eqn added
+  theme_light()+
+  #this adds the eqn for the generated lm to the graph, x and y are where it is added
+  ggpubr::stat_regline_equation(label.x = 180, label.y = 5700)
+```
+```{r}
+penguins_cor <- cor.test(penguins$flipper_length_mm, penguins$body_mass_g)
+penguins_cor
+#This show pearson's R of 0.87, strong positive correlation  between flipper lwngth and body mass
+```
 
